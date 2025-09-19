@@ -13,5 +13,5 @@ openssl req -x509 -newkey rsa:4096 -keyout certs/key.pem -out certs/cert.pem -sh
 
 run
 ```
-podman run -it --rm -v ./certs:/certs:z -v ../capture/mirror:/mirror:z -p 9999:80 web
+podman run -it --rm -v ./certs:/certs:z -v ../capture/mirror:/mirror:z -p 9999:80 -p 9943:443 web 
 ```
