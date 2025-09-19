@@ -4,7 +4,7 @@ podman build -t web .
 ```
 
 
-make cert (or inject propper ones)
+make cert (or inject propper ones) CN=mirror -> mirror should be your hostname or the ip that you use as a link
 ```
 mkdir certs
 openssl req -x509 -newkey rsa:4096 -keyout certs/key.pem -out certs/cert.pem -sha256 -days 3650 -nodes -subj "/C=eu/ST=state/L=city/O=mirror/OU=mirror/CN=mirror"
@@ -13,5 +13,7 @@ openssl req -x509 -newkey rsa:4096 -keyout certs/key.pem -out certs/cert.pem -sh
 
 run
 ```
-podman run -it --rm -v ./certs:/certs:z -v ../capture/mirror:/mirror:z -p 9999:80 -p 9943:443 web 
+podman run -it --rm -v ./certs:/certs:z -v ../capture/mirror:/mirror:z -p 9999:80 -p 9943:443 web
 ```
+
+paste in the ```https://mirror:9943/rocky``` and upload ```certs/cert.pem``` as the public key / certificate
