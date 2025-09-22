@@ -11,7 +11,8 @@ base.conf.substitutions.update_from_etc(installroot=base.conf.installroot, varsd
 base.read_all_repos()
 
 alllogs = ["Synced:"]
-for repoid in base.repos:
+veeamrepos = {k: v for k, v in base.repos.items() if k.startswith("veeam-")}
+for repoid in veeamrepos:
   repo = base.repos[repoid]
   url = repo.baseurl[0]
   parsed = urlparse(url)
