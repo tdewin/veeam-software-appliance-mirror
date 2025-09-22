@@ -6,13 +6,11 @@ podman build -t web .
 # remote build
 alternative exporting it after build
 ```
-podman run -d --name web web
-podman stop web
-podman export -o web.tar web
+podman save -o web.tar web
 ```
 
 ```
-podman import -m "import" web.tar web
+podman load -i web.tar
 ```
 
 
