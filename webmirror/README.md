@@ -12,7 +12,7 @@ podman export -o web.tar web
 ```
 
 ```
-podman import -m "import" web.tar
+podman import -m "import" web.tar web
 ```
 
 
