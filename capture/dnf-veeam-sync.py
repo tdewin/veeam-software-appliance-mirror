@@ -1,19 +1,25 @@
 #!/usr/bin/env python3
 import subprocess
 from urllib.parse import urlparse
+import dnf
 
-result = subprocess.run(['dnf', 'repolist', 'veeam-*','-v'], capture_output=True, text=True)
 
-id = ""
-for ln in result.stdout.split("\n"):
-  words = ln.split(":")
-  if len(words) > 1:
-    firstword = words[0].strip().lower()
-    remainder = ":".join(words[1:]).strip()
-    if (firstword == "repo-id"):
-      id = remainder
-    elif (firstword == "repo-baseurl"):
-      parsed = urlparse(remainder)
-      path_only = parsed.path.lstrip("/")
-      torun = ["dnf","reposync","--download-meta","-p",f"/mirror/{path_only}","--norepopath","--repo",id]
-      subprocess.run(torun)
+base = dnf.Base()
+
+base.conf.read(priority=dnf.conf.PRIO_MAINCONFIG)
+base.conf.substitutions.update_from_etc(installroot=base.conf.installroot, varsdir=base.conf.varsdir)
+base.read_all_repos()
+
+alllogs = ["Synced:"]
+for repoid in base.repos:
+  repo = base.repos[repoid]
+  url = repo.baseurl[0]
+  parsed = urlparse(url)
+  path_only = parsed.path.lstrip("/")
+  log = f'{repoid} {url} > /mirror/{path_only}'
+  print(f"Running {log}")
+  alllogs.append(log)
+  torun = ["dnf","reposync","--download-meta","-p",f"/mirror/{path_only}","--norepopath","--repo",repoid]
+  subprocess.run(torun)
+
+print("\n".join(alllogs))
